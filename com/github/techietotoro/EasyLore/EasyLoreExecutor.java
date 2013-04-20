@@ -30,7 +30,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 			}
 			args = tempArgs;
 
-			
+
 			if (!(sender instanceof Player)) {
 				if (cmd1.equalsIgnoreCase("help")) {
 					// display EasyLore help here
@@ -186,12 +186,12 @@ public class EasyLoreExecutor implements CommandExecutor {
 				}
 				else if (cmd1.equalsIgnoreCase("generate")) {
 					//add a random lore for the specific item from a YAML file of prewritten lores
-				
+
 					return true;
 				}
 				else {
 					//explain that the command after /lore was not recognized
-					
+
 					return true;
 				}
 
@@ -202,6 +202,36 @@ public class EasyLoreExecutor implements CommandExecutor {
 		} //If this has happened the function will return true. 
 		else if(cmd.getName().equalsIgnoreCase("name")) {
 			// /name renames items
+			// get 1st argument
+			String cmd1 = args[0];
+
+			if (!(sender instanceof Player)) {
+				if (cmd1.equalsIgnoreCase("help")) {
+					// display EasyLore /name help here
+					return true;
+				}
+				sender.sendMessage("This command can only be run by a player.");
+				return true;
+			} else {
+				Player player = (Player) sender;
+				// get the item in hand
+				ItemStack itemInHand = player.getItemInHand();
+				ItemMeta itemMeta = itemInHand.getItemMeta();
+
+				// handle secondary command. eg: /name <command>
+				if (cmd1.equalsIgnoreCase("default") && args.length == 1) {
+					// TODO:set the name of the item to be the default
+				} else {
+					// name the item
+					String newName = new String(args[0]);
+					for (int i = 1; i < args.length; i++) {
+						newName = newName + " " + args[i];
+					}
+					itemMeta.setDisplayName(newName);
+					itemInHand.setItemMeta(itemMeta);
+				}
+				
+			}
 		}
 		// If this hasn't happened the a value of false will be returned.
 		return false; 
