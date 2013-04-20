@@ -1,0 +1,9 @@
+name: EasyLore
+main: com.github.techietotoro.EasyLore.EasyLore
+version: 0.1.5
+commands:
+   lore:
+      description: This is the base command for adding lore to the item in hand.
+      usage: /<command> [action] [line number] [text]
+      permission: <plugin name>.lore
+      permission-message: You don't have <permission>
