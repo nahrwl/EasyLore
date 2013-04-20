@@ -22,18 +22,23 @@ public class EasyLoreExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("lore")){ // If the player typed /lore then do the following...
+			// get next argument and remove from array
+			String cmd1 = args[0];
+			String[] tempArgs = new String[args.length - 1];
+			for (int i = 1; i < args.length; i++) {
+				tempArgs[i-1] = args[i];
+			}
+			args = tempArgs;
+
+			
 			if (!(sender instanceof Player)) {
+				if (cmd1.equalsIgnoreCase("help")) {
+					// display EasyLore help here
+					return true;
+				}
 				sender.sendMessage("This command can only be run by a player.");
 				return true;
 			} else if (args.length > 0) { //sanitize argument count here!!!
-				// get next argument and remove from array
-				String cmd1 = args[0];
-				String[] tempArgs = new String[args.length - 1];
-				for (int i = 1; i < args.length; i++) {
-					tempArgs[i-1] = args[i];
-				}
-				args = tempArgs;
-
 				Player player = (Player) sender;
 				// get the item in hand
 				ItemStack itemInHand = player.getItemInHand();
@@ -79,7 +84,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 						else {
 							// ok, replace the line
 							newList.remove(line - 1);
-							newList.add(line - 1, newLore);
+							newList.add(line - 1, EasyLore.parseColors(newLore));
 							itemMeta.setLore(newList);
 							itemInHand.setItemMeta(itemMeta);
 							sender.sendMessage(ChatColor.GREEN + "New lore replaced!");
@@ -106,7 +111,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 						newList = new ArrayList<String>(1);
 					}
 
-					newList.add(newLore);
+					newList.add(EasyLore.parseColors(newLore));
 					itemMeta.setLore(newList);
 					itemInHand.setItemMeta(itemMeta);
 
@@ -129,7 +134,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 									newList.remove(line-1);
 									itemMeta.setLore(newList);
 									itemInHand.setItemMeta(itemMeta);
-									sender.sendMessage(ChatColor.GREEN + "New lore replaced!");
+									sender.sendMessage(ChatColor.RED + "Lore removed!");
 								}
 							} else {
 								// explain that there needs to be lore to remove
@@ -144,12 +149,60 @@ public class EasyLoreExecutor implements CommandExecutor {
 					}
 					return true;
 				}
+				else if (cmd1.equalsIgnoreCase("insert")) {
+					//insert lore at the specified index
+					// requires line number to set
+					try {
+						int line = Integer.decode(args[0]);
+						// parse the String[]
+						String newLore = new String(args[1]);
+						for (int i = 2; i < args.length; i++) {
+							newLore = newLore + " " + args[i];
+						}
+
+						ArrayList<String> newList;
+						if (itemMeta.hasLore()) {
+							newList = (ArrayList<String>) itemMeta.getLore();
+						} else {
+							newList = new ArrayList<String>(1);
+						}
+
+						if (line > newList.size()) {
+							// explain that its an invalid line
+						}
+						else {
+							// ok, insert the line
+							newList.add(line - 1, EasyLore.parseColors(newLore));
+							itemMeta.setLore(newList);
+							itemInHand.setItemMeta(itemMeta);
+							sender.sendMessage(ChatColor.GREEN + "New lore replaced!");
+						}
+
+					} catch (NumberFormatException e) {
+						// explain that /lore replace requires line number
+					}
+
+					return true;
+				}
+				else if (cmd1.equalsIgnoreCase("generate")) {
+					//add a random lore for the specific item from a YAML file of prewritten lores
+				
+					return true;
+				}
+				else {
+					//explain that the command after /lore was not recognized
+					
+					return true;
+				}
 
 			}
 			// display a help menu for /lore here
 
 			return true;
 		} //If this has happened the function will return true. 
+		else if(cmd.getName().equalsIgnoreCase("name")) {
+			// /name renames items
+		}
 		// If this hasn't happened the a value of false will be returned.
 		return false; 
 	}
