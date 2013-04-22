@@ -1,9 +1,39 @@
 name: EasyLore
 main: com.github.techietotoro.EasyLore.EasyLore
-version: 0.1.5
+version: 0.1.8
 commands:
    lore:
       description: This is the base command for adding lore to the item in hand.
-      usage: /<command> [action] [line number] [text]
-      permission: <plugin name>.lore
+      usage: /lore [action] [line number] [text]
+      permission: EasyLore.lore.*
+      permission-message: You don't have <permission>
+   lore add:
+      description: Adds lore to the item in hand.
+      usage: /lore add [text]
+      permission: EasyLore.lore.add
+      permission-message: You don't have <permission>
+   lore remove:
+      description: Removes lore to the item in hand.
+      usage: /lore remove [line number]
+      permission: EasyLore.lore.remove
+      permission-message: You don't have <permission>
+   lore set:
+      description: Removes current lore (if any) and sets it to new lore.
+      usage: /lore set [text]
+      permission: EasyLore.lore.set
+      permission-message: You don't have <permission>
+   lore replace:
+      description: Replaces lore on the specified line.
+      usage: /lore replace [line number] [text]
+      permission: EasyLore.lore.replace
+      permission-message: You don't have <permission>
+   lore insert:
+      description: Inserts lore at the specified line to the item in hand.
+      usage: /lore insert [line number] [text]
+      permission: EasyLore.lore.insert
+      permission-message: You don't have <permission>
+   name:
+      description: Name an item like an anvil
+      usage: /name [text]
+      permission: EasyLore.name
       permission-message: You don't have <permission>

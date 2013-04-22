@@ -3,6 +3,7 @@ package com.github.techietotoro.EasyLore;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class EasyChat {
@@ -12,6 +13,12 @@ public class EasyChat {
 	
 	private static String prefix = "";
 	private static String suffix = "";
+	
+	private static String errorPrefix = "";
+	private static String errorSuffix = "";
+	
+	private static ChatColor messageColor = ChatColor.GREEN;
+	private static ChatColor errorColor = ChatColor.RED;
 	
 	private static String[][] help;
 	
@@ -33,6 +40,22 @@ public class EasyChat {
 		suffix = str;
 	}
 	
+	public static void setErrorPrefix(String str) {
+		errorPrefix = str;
+	}
+	
+	public static void setErrorSuffix(String str) {
+		errorSuffix = str;
+	}
+	
+	public static void setMessageColor(ChatColor color) {
+		messageColor = color;
+	}
+	
+	public static void setErrorColor(ChatColor color) {
+		errorColor = color;
+	}
+	
 	public static void setHelp(String[] theHelp) {
 		help = paginate(theHelp);
 	}
@@ -40,13 +63,17 @@ public class EasyChat {
 	// Public Methods //
 	
 	public static void sendMessage(CommandSender sender, String message) {
-		sender.sendMessage(prefix + message + suffix);
+		sender.sendMessage(prefix + messageColor + message + ChatColor.RESET + suffix);
 	}
 	
 	public static void sendMessages(CommandSender sender, String[] messageArray) {
 		for (int i = 0; i < messageArray.length; i++) {
-			sender.sendMessage(prefix + messageArray[i] + suffix);
+			sender.sendMessage(prefix + messageColor + messageArray[i] + ChatColor.RESET + suffix);
 		}
+	}
+	
+	public static void sendError(CommandSender sender, String message) {
+		sender.sendMessage(prefix + errorPrefix + errorColor + message + ChatColor.RESET + errorSuffix + suffix);
 	}
 	
 	public static void displayHelpPage(CommandSender sender, int page) {

@@ -22,23 +22,31 @@ public class EasyLoreExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("lore")){ // If the player typed /lore then do the following...
-			// get next argument and remove from array
-			String cmd1 = args[0];
-			String[] tempArgs = new String[args.length - 1];
-			for (int i = 1; i < args.length; i++) {
-				tempArgs[i-1] = args[i];
-			}
-			args = tempArgs;
 
 
 			if (!(sender instanceof Player)) {
-				if (cmd1.equalsIgnoreCase("help")) {
-					// display EasyLore help here
-					return true;
+				if (args.length == 1) {
+					if (args[0].equalsIgnoreCase("help")) {
+						// display EasyLore help here
+						displayHelp();
+						return true;
+					} else {
+						EasyChat.sendMessage(sender, "This command can only be run by a player.");
+					}
+				} else {
+				EasyChat.sendMessage(sender, "This command can only be run by a player.");
 				}
-				sender.sendMessage("This command can only be run by a player.");
 				return true;
 			} else if (args.length > 0) { //sanitize argument count here!!!
+				// get next argument and remove from array
+				String cmd1 = args[0];
+				String[] tempArgs = new String[args.length - 1];
+				for (int i = 1; i < args.length; i++) {
+					tempArgs[i-1] = args[i];
+				}
+				args = tempArgs;
+				
+				
 				Player player = (Player) sender;
 				// get the item in hand
 				ItemStack itemInHand = player.getItemInHand();
@@ -58,7 +66,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 					// set lore
 					itemMeta.setLore(newList);
 					itemInHand.setItemMeta(itemMeta);
-					sender.sendMessage(ChatColor.GREEN + "New lore set!");
+					EasyChat.sendMessage(player, "New lore set!");
 					return true;
 				}
 				else if (cmd1.equalsIgnoreCase("replace")) {
@@ -80,6 +88,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 
 						if (line > newList.size()) {
 							// explain that its an invalid line
+							EasyChat.sendError(player, "Invalid line number.");
 						}
 						else {
 							// ok, replace the line
@@ -87,11 +96,12 @@ public class EasyLoreExecutor implements CommandExecutor {
 							newList.add(line - 1, EasyLore.parseColors(newLore));
 							itemMeta.setLore(newList);
 							itemInHand.setItemMeta(itemMeta);
-							sender.sendMessage(ChatColor.GREEN + "New lore replaced!");
+							EasyChat.sendMessage(sender, "New lore replaced!");
 						}
 
 					} catch (NumberFormatException e) {
 						// explain that /lore replace requires line number
+						EasyChat.sendError(sender, "/lore replace requires a line number!");
 					}
 
 					return true;
@@ -115,6 +125,8 @@ public class EasyLoreExecutor implements CommandExecutor {
 					itemMeta.setLore(newList);
 					itemInHand.setItemMeta(itemMeta);
 
+					EasyChat.sendMessage(sender, "New lore added!");
+					
 					return true;
 				}
 				else if (cmd1.equalsIgnoreCase("remove")) {
@@ -126,26 +138,30 @@ public class EasyLoreExecutor implements CommandExecutor {
 							if (itemMeta.hasLore()) {
 								newList = (ArrayList<String>) itemMeta.getLore();
 
-								if (line > newList.size()) {
+								if (line > newList.size() || line < 1) {
 									// explain that its an invalid line
+									EasyChat.sendError(sender, "Invalid line number.");
 								}
 								else {
 									// ok, replace the line
 									newList.remove(line-1);
 									itemMeta.setLore(newList);
 									itemInHand.setItemMeta(itemMeta);
-									sender.sendMessage(ChatColor.RED + "Lore removed!");
+									EasyChat.sendMessage(sender, "Lore removed!");
 								}
 							} else {
 								// explain that there needs to be lore to remove
+								EasyChat.sendError(sender, "There needs to be lore to remove!");
 							}
 
 
 						} catch (NumberFormatException e) {
 							// explain that /lore remove requires line number
+							EasyChat.sendError(sender, "/lore remove requires a line number!");
 						}
 					} else {
 						//explain that /lore remove takes only 1 argument
+						EasyChat.sendError(sender, "/lore remove takes only 1 parameter!");
 					}
 					return true;
 				}
@@ -155,7 +171,10 @@ public class EasyLoreExecutor implements CommandExecutor {
 					try {
 						int line = Integer.decode(args[0]);
 						// parse the String[]
-						String newLore = new String(args[1]);
+						String newLore = "";
+						if (args.length > 1) {
+							newLore = new String(args[1]);
+						}
 						for (int i = 2; i < args.length; i++) {
 							newLore = newLore + " " + args[i];
 						}
@@ -167,19 +186,21 @@ public class EasyLoreExecutor implements CommandExecutor {
 							newList = new ArrayList<String>(1);
 						}
 
-						if (line > newList.size()) {
+						if (line > newList.size() || line < 1) {
 							// explain that its an invalid line
+							EasyChat.sendError(sender, "Invalid line number.");
 						}
 						else {
 							// ok, insert the line
 							newList.add(line - 1, EasyLore.parseColors(newLore));
 							itemMeta.setLore(newList);
 							itemInHand.setItemMeta(itemMeta);
-							sender.sendMessage(ChatColor.GREEN + "New lore replaced!");
+							EasyChat.sendMessage(sender, "New lore replaced!");
 						}
 
 					} catch (NumberFormatException e) {
 						// explain that /lore replace requires line number
+						EasyChat.sendError(sender, "/lore insert requires line number!");
 					}
 
 					return true;
@@ -191,7 +212,7 @@ public class EasyLoreExecutor implements CommandExecutor {
 				}
 				else {
 					//explain that the command after /lore was not recognized
-
+					EasyChat.sendError(sender, "Command not recognized.");
 					return true;
 				}
 
@@ -203,14 +224,16 @@ public class EasyLoreExecutor implements CommandExecutor {
 		else if(cmd.getName().equalsIgnoreCase("name")) {
 			// /name renames items
 			// get 1st argument
-			String cmd1 = args[0];
+			String cmd1 = "";
+			if (args.length == 1) cmd1 = args[0];
 
 			if (!(sender instanceof Player)) {
 				if (cmd1.equalsIgnoreCase("help")) {
 					// display EasyLore /name help here
+					displayHelp();
 					return true;
 				}
-				sender.sendMessage("This command can only be run by a player.");
+				EasyChat.sendError(sender, "This command can only be run by a player.");
 				return true;
 			} else {
 				Player player = (Player) sender;
@@ -230,10 +253,14 @@ public class EasyLoreExecutor implements CommandExecutor {
 					itemMeta.setDisplayName(newName);
 					itemInHand.setItemMeta(itemMeta);
 				}
-				
+				return true;
 			}
 		}
 		// If this hasn't happened the a value of false will be returned.
 		return false; 
+	}
+	
+	private void displayHelp() {
+		
 	}
 }
